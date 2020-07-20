@@ -90,6 +90,10 @@ type Registry struct {
 	// renderAllRequestBodies forces swagger definitions to be generated for all gRPC service request types,
 	// even those that are not referenced by HTTP configuration
 	renderAllRequestBodies bool
+
+	// includeUnreferencedTypes if true will generate swagger definitions for all message and enum types,
+	// even those that are not referenced by an RPC method.
+	includeUnreferencedTypes bool
 }
 
 type repeatedFieldSeparator struct {
@@ -110,6 +114,13 @@ func NewRegistry() *Registry {
 			name: "csv",
 			sep:  ',',
 		},
+	}
+}
+
+func (r *Registry) LogMessages() {
+	glog.Warning("messages:")
+	for k, v := range r.msgs {
+		glog.Warning(k, v.GetName(), v.GetField())
 	}
 }
 
@@ -536,6 +547,16 @@ func (r *Registry) SetRenderAllRequestBodies(use bool) {
 // GetRenderAllRequestBodies returns renderAllRequestBodies
 func (r *Registry) GetRenderAllRequestBodies() bool {
 	return r.renderAllRequestBodies
+}
+
+// SetIncludeUnreferencedTypes sets includeUnreferencedTypes
+func (r *Registry) SetIncludeUnreferencedTypes(use bool) {
+	r.includeUnreferencedTypes = use
+}
+
+// GetIncludeUnreferencedTypes returns includeUnreferencedTypes
+func (r *Registry) GetIncludeUnreferencedTypes() bool {
+	return r.includeUnreferencedTypes
 }
 
 // sanitizePackageName replaces unallowed character in package name
